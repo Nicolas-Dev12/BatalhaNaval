@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TAM 10      
+#define H 5         
+
+void inicializarTabuleiro(int tabuleiro[TAM][TAM]) {
+    for (int i = 0; i < TAM; i++)
+        for (int j = 0; j < TAM; j++)
+            tabuleiro[i][j] = 0;
+    
+    tabuleiro[2][2] = 3;
+    tabuleiro[4][4] = 3;
+    tabuleiro[6][6] = 3;
+}
+
+void imprimirTabuleiro(int tabuleiro[TAM][TAM]) {
+    printf("\nTABULEIRO:\n\n");
+    for (int i = 0; i < TAM; i++) {
+        for (int j = 0; j < TAM; j++) {
+            if (tabuleiro[i][j] == 0) printf(" 0 ");
+            else if (tabuleiro[i][j] == 3) printf(" 3 ");
+            else if (tabuleiro[i][j] == 5) printf(" 5 ");
+        }
+        printf("\n");
+    }
+}
+
+
+void criarCone(int matriz[H][H]) {
+    int meio = H / 2;
+    for (int i = 0; i < H; i++) {
+        for (int j = 0; j < H; j++) {
+            if (j >= meio - i && j <= meio + i)
+                matriz[i][j] = 1;
+            else
+                matriz[i][j] = 0;
+        }
+    }
+}
+
+
+void criarCruz(int matriz[H][H]) {
+    int meio = H / 2;
+    for (int i = 0; i < H; i++) {
+        for (int j = 0; j < H; j++) {
+            if (i == meio || j == meio)
+                matriz[i][j] = 1;
+            else
+                matriz[i][j] = 0;
+        }
+    }
+}
+
+void criarOctaedro(int matriz[H][H]) {
+    int meio = H / 2;
+    for (int i = 0; i < H; i++) {
+        for (int j = 0; j < H; j++) {
+            if (abs(i - meio) + abs(j - meio) <= meio)
+                matriz[i][j] = 1;
+            else
+                matriz[i][j] = 0;
+        }
+    }
+}
+
+void aplicarHabilidade(int tabuleiro[TAM][TAM], int habilidade[H][H], int origem_i, int origem_j) {
+    int offset = H / 2;
+    for (int i = 0; i < H; i++) {
+        for (int j = 0; j < H; j++) {
+            int linha = origem_i - offset + i;
+            int coluna = origem_j - offset + j;
+
+        
+            if (linha >= 0 && linha < TAM && coluna >= 0 && coluna < TAM) {
+                if (habilidade[i][j] == 1)
+                    tabuleiro[linha][coluna] = 5;
+            }
+        }
+    }
+}
+
+int main() {
+    int tabuleiro[TAM][TAM];
+    int cone[H][H], cruz[H][H], octaedro[H][H];
+
+
+    inicializarTabuleiro(tabuleiro);
+
+    criarCone(cone);
+    criarCruz(cruz);
+    criarOctaedro(octaedro);
+
+    
+    aplicarHabilidade(tabuleiro, cone, 2, 2);       
+    aplicarHabilidade(tabuleiro, cruz, 5, 5);       
+    aplicarHabilidade(tabuleiro, octaedro, 7, 7);  
+
+    
+    imprimirTabuleiro(tabuleiro);
+
+    return 0;
+}
